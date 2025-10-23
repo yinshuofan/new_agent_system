@@ -1,0 +1,55 @@
+# 智能体系统配置文件示例
+
+# 智能体配置
+agent:
+  # 最大记忆容量
+  max_memories: 1000
+  # 情感衰减率
+  emotion_decay_rate: 0.05
+  # 心境更新速率
+  mood_update_rate: 0.1
+
+# 调度器配置
+scheduler:
+  # 定期更新间隔（秒）
+  update_interval: 300  # 5分钟
+  # 环境检查间隔（秒）
+  environment_check_interval: 120  # 2分钟
+  # 目标评估间隔（秒）
+  goal_evaluation_interval: 600  # 10分钟
+
+# 管理器配置
+manager:
+  # 最大智能体数量
+  max_agents: 100
+
+# 模块配置
+modules:
+  # 感知模块
+  perception:
+    max_buffer_size: 100
+
+  # 记忆模块
+  memory:
+    forgetting_enabled: true
+    forgetting_threshold: 0.1
+
+  # 情感模块
+  emotion:
+    reflection_enabled: true
+    reflection_interval: 10
+
+  # 目标模块
+  goal:
+    # 需求衰减率（每小时）
+    need_decay_rate: 0.01
+
+  # 认知模块
+  cognition:
+    reflection_enabled: true
+    reflection_interval: 10
+
+  # 行为模块
+  behavior:
+    retry_enabled: true
+    max_retries: 3
