@@ -287,28 +287,52 @@ class EmotionModule(EmotionInterface):
 
     async def _on_perception_updated(self, event) -> None:
         """感知更新事件处理"""
-        # 可以根据感知内容触发情感
-        # 例如：感知到威胁 -> 恐惧
-        pass
+        # 根据感知内容触发情感
+        perception = event.data.get("perception", {})
+        content = perception.get("content", {})
 
-    async def _on_memory_created(self, event) -> None:
-        """记忆创建事件处理"""
-        # 可以根据记忆的情感标签触发情感变化
-        importance = event.data.get("importance", 0.5)
-        if importance > 0.7:
-            # 重要事件可能引起情感波动
+        # 检查事件类型
+        event_type = content.get("event_type", "")
+
+        # 用户消息 - 正面交互
+        if event_type == "user_message":
             await self.process_emotion({
-                "type": "important_memory",
-                "valence": 0.0,
-                "arousal": 0.5,
-                "intensity": importance * 0.5,
-                "description": "重要事件发生"
+                "type": "social_interaction",
+                "valence": 0.3,  # 轻微正面
+                "arousal": 0.4,
+                "intensity": 0.3,
+                "description": "与用户交流"
             })
+
+        # 其他感知类型
+        stimulus_type = perception.get("type", "")
+        if stimulus_type == "message":
+            # 消息类感知，小幅正面情感
+            await self.process_emotion({
+                "type": "communication",
+                "valence": 0.2,
+                "arousal": 0.3,
+                "intensity": 0.2,
+                "description": "收到消息"
+            })
+        elif stimulus_type == "environment":
+            # 环境感知，根据内容判断
+            description = content.get("description", "")
+            if "危险" in description or "danger" in description.lower():
+                await self.process_emotion({
+                    "type": "environment_threat",
+                    "valence": -0.6,
+                    "arousal": 0.8,
+                    "intensity": 0.7,
+                    "description": "感知到威胁"
+                })
 
     async def _on_environment_changed(self, event) -> None:
         """环境变化事件处理"""
         # 环境变化可能影响情感
         change_type = event.data.get("change_type", "")
+        environment_data = event.data.get("environment_data", {})
+
         if change_type == "danger":
             await self.process_emotion({
                 "type": "environment_danger",
@@ -316,6 +340,23 @@ class EmotionModule(EmotionInterface):
                 "arousal": 0.8,
                 "intensity": 0.7,
                 "description": "环境出现危险"
+            })
+        elif change_type == "positive":
+            await self.process_emotion({
+                "type": "environment_positive",
+                "valence": 0.5,
+                "arousal": 0.4,
+                "intensity": 0.5,
+                "description": "环境改善"
+            })
+        else:
+            # 默认中性环境变化，小幅情感波动
+            await self.process_emotion({
+                "type": "environment_change",
+                "valence": 0.1,
+                "arousal": 0.2,
+                "intensity": 0.1,
+                "description": "环境变化"
             })
 
     async def _on_action_failed(self, event) -> None:
@@ -327,3 +368,9 @@ class EmotionModule(EmotionInterface):
             "intensity": 0.6,
             "description": f"行为执行失败: {event.data.get('action', '')}"
         })
+
+    async def _on_memory_created(self, event) -> None:
+        """记忆创建事件处理"""
+        # 可以根据记忆的重要性触发情感
+        # 目前作为占位符，未来可以实现
+        pass

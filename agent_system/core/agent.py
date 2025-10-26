@@ -274,6 +274,63 @@ class Agent:
         """
         self._environment_callback = callback
 
+    async def chat(self, message: str) -> str:
+        """
+        与智能体对话（简化接口）
+
+        Args:
+            message: 用户消息
+
+        Returns:
+            智能体回复
+        """
+        if not self._running:
+            raise RuntimeError("Agent not running")
+
+        # 1. 感知用户消息
+        await self.perception.perceive_environment({
+            "type": "message",
+            "source": "user",
+            "content": {
+                "event_type": "user_message",
+                "message": message,
+                "timestamp": datetime.now().isoformat()
+            }
+        })
+
+        # 2. 获取完整上下文
+        context = await self.context_manager.get_full_context(trigger="chat")
+
+        # 3. 使用认知模块决策
+        if self.use_llm and self.cognition:
+            # 格式化上下文给LLM
+            formatted_context = self.context_manager.format_context_for_llm(context, "chat")
+
+            # 使用认知模块生成回复
+            decision = await self.cognition.decide({
+                "trigger": "chat",
+                "context": formatted_context,
+                "user_message": message
+            })
+
+            reply = decision.get("response", "我正在思考...")
+        else:
+            # 无LLM模式：简单回复
+            reply = f"（我收到了你的消息：'{message}'）"
+
+        # 4. 存储对话到记忆
+        await self.memory.store("event", {
+            "event_type": "conversation",
+            "event_summary": f"与用户对话: {message[:30]}...",
+            "event_details": f"用户: {message}\n{self.name}: {reply}",
+            "participants": ["user", self.agent_id],
+            "timestamp": datetime.now().isoformat(),
+            "importance": 0.5,
+            "tags": ["conversation", "chat"]
+        })
+
+        return reply
+
     def get_event_bus(self) -> EventBus:
         """获取事件总线（用于外部监听）"""
         return self._event_bus

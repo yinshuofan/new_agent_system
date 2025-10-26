@@ -68,6 +68,8 @@ class ContextManager:
     async def _get_identity_context(self) -> Dict[str, Any]:
         """获取角色身份信息"""
         return {
+            "agent_id": self.agent.agent_id,
+            "name": self.agent.name,
             "role": self.agent.config.get("role", "agent"),
             "personality": self.agent.config.get("personality", ""),
             "expertise": self.agent.config.get("expertise", ""),
@@ -166,11 +168,12 @@ class ContextManager:
 
         memories_list = []
         for mem in memories:
-            content = mem.get("content", {})
+            # Memory fields are at top level, not under "content"
             memories_list.append({
-                "summary": content.get("event_summary", ""),
-                "details": content.get("event_details", ""),
-                "timestamp": content.get("timestamp", "")
+                "summary": mem.get("event_summary", ""),
+                "details": mem.get("event_details", ""),
+                "timestamp": mem.get("timestamp", ""),
+                "event_type": mem.get("event_type", "")
             })
 
         return {

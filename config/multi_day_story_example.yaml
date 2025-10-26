@@ -1,0 +1,349 @@
+# 多天剧情示例：侦探的三天调查
+# 演示如何配置跨越多天的剧情
+
+metadata:
+  title: "连环失窃案调查"
+  theme: "侦探推理"
+  genre: "detective_mystery"
+  start_date: "2025-10-26"
+  duration_days: 3
+  estimated_duration: "3 days"
+
+# 角色定义（所有天共享）
+characters:
+  detective:
+    name: "Detective Morgan"
+    display_name: "摩根探长"
+    role: "侦探"
+    personality: "冷静、专注、善于观察"
+    expertise:
+      - "犯罪调查"
+      - "证据分析"
+      - "逻辑推理"
+    background: "经验丰富的警探，破案无数"
+    story_goal: "调查并破获连环失窃案"
+
+  assistant:
+    name: "Officer Lee"
+    display_name: "李警官"
+    role: "助手"
+    personality: "热心、勤奋、擅长记录"
+    expertise:
+      - "现场勘查"
+      - "证人访谈"
+    background: "新晋警官，渴望学习"
+    story_goal: "协助探长破案，积累经验"
+
+# 多天时间线
+multi_day_timeline:
+  # ========== 第一天：案发调查 ==========
+  day_1:
+    date: "2025-10-26"
+    day_title: "第一天：案发调查"
+    summary: "接到报案，开始调查第一起失窃案"
+
+    events:
+      - time: "09:00"
+        chapter: 1
+        title: "接到报案"
+        location: "警局"
+        participants: [detective, assistant]
+        description: |
+          早晨9点，警局接到报案。
+          市中心一家珠宝店在夜间被盗，损失价值百万。
+        key_points:
+          - "珠宝店被盗"
+          - "损失约100万"
+          - "无明显破坏痕迹"
+        clues_introduced:
+          - "没有强行进入的痕迹"
+          - "监控被短暂中断"
+
+      - time: "10:00"
+        chapter: 2
+        title: "现场勘查"
+        location: "珠宝店"
+        participants: [detective, assistant]
+        description: |
+          前往珠宝店现场。
+          摩根探长仔细检查每个细节。
+        investigation_points:
+          - location: "后门"
+            finding: "门锁完好无损"
+            significance: "内部作案可能性大"
+
+          - location: "监控室"
+            finding: "监控在凌晨2:15-2:30断电"
+            significance: "作案时间窗口"
+
+      - time: "12:00"
+        chapter: 3
+        title: "午餐讨论"
+        location: "附近餐厅"
+        participants: [detective, assistant]
+        description: |
+          午餐时讨论案情。
+          李警官分享初步看法。
+        discussion_topics:
+          - "内部人员嫌疑"
+          - "专业作案手法"
+
+      - time: "14:00"
+        chapter: 4
+        title: "访谈员工"
+        location: "警局"
+        participants: [detective, assistant]
+        description: |
+          传唤珠宝店员工进行访谈。
+          收集不在场证明和个人背景。
+        witnesses:
+          - name: "店长王某"
+            testimony: "昨晚8点下班离开"
+            suspicious: "最后一个离开"
+
+      - time: "17:00"
+        chapter: 5
+        title: "整理线索"
+        location: "警局"
+        participants: [detective, assistant]
+        description: |
+          回到警局整理当天收集的线索。
+          准备第二天的调查计划。
+        conclusions:
+          - "锁定3名重点嫌疑人"
+          - "需要调查监控系统"
+
+      - time: "18:00"
+        chapter: 6
+        title: "下班休息"
+        location: "各自回家"
+        participants: [detective, assistant]
+        description: "结束第一天的调查，回家休息"
+
+  # ========== 第二天：深入调查 ==========
+  day_2:
+    date: "2025-10-27"
+    day_title: "第二天：深入调查"
+    summary: "继续调查，发现第二起案件，发现关联"
+
+    events:
+      - time: "08:00"
+        chapter: 7
+        title: "新案件报警"
+        location: "警局"
+        participants: [detective, assistant]
+        description: |
+          早晨接到新的报案。
+          另一家古玩店也在昨晚被盗。
+        key_points:
+          - "作案手法相似"
+          - "同样的监控断电"
+          - "可能是连环案件"
+        clues_introduced:
+          - "同样的作案时间窗口"
+          - "专业的反侦查手段"
+
+      - time: "09:30"
+        chapter: 8
+        title: "第二现场勘查"
+        location: "古玩店"
+        participants: [detective, assistant]
+        description: |
+          前往古玩店调查。
+          发现与第一起案件的相似之处。
+        investigation_points:
+          - location: "监控系统"
+            finding: "同样型号，同样方式被破坏"
+            significance: "作案者熟悉该系统"
+
+          - location: "现场"
+            finding: "发现微量特殊纤维"
+            significance: "可能来自特殊工作服"
+
+      - time: "11:30"
+        chapter: 9
+        title: "技术分析"
+        location: "警局技术科"
+        participants: [detective]
+        description: |
+          将纤维送检技术科分析。
+          等待结果的同时，摩根分析案件关联。
+        analysis_results:
+          - substance: "特殊纤维"
+            composition: "工业用防静电材料"
+            source: "电子或监控维修行业"
+            significance: "嫌疑人可能从事相关工作"
+
+      - time: "14:00"
+        chapter: 10
+        title: "关键突破"
+        location: "警局"
+        participants: [detective, assistant]
+        description: |
+          技术科反馈结果。
+          摩根探长联想到一个重要线索。
+        key_realizations:
+          - "两家店的监控都是同一家公司维护"
+          - "维修记录显示最近有同一个技术员上门"
+          - "该技术员可能是作案者"
+
+      - time: "16:00"
+        chapter: 11
+        title: "追踪嫌疑人"
+        location: "监控公司"
+        participants: [detective, assistant]
+        description: |
+          前往监控公司调查技术员信息。
+          发现该技术员已经辞职。
+        findings:
+          - "技术员名叫张某"
+          - "一周前突然辞职"
+          - "留下虚假联系方式"
+
+      - time: "18:00"
+        chapter: 12
+        title: "制定抓捕计划"
+        location: "警局"
+        participants: [detective, assistant]
+        description: |
+          通过各种渠道追踪张某行踪。
+          制定明天的抓捕计划。
+        plan:
+          - "查询张某银行记录"
+          - "追踪其常去地点"
+          - "准备明日抓捕"
+
+  # ========== 第三天：破案抓捕 ==========
+  day_3:
+    date: "2025-10-28"
+    day_title: "第三天：破案抓捕"
+    summary: "锁定嫌疑人位置，实施抓捕，破案"
+
+    events:
+      - time: "07:00"
+        chapter: 13
+        title: "获得线索"
+        location: "警局"
+        participants: [detective, assistant]
+        description: |
+          银行反馈了张某的交易记录。
+          发现他在郊区某地频繁消费。
+        key_points:
+          - "锁定嫌疑人活动区域"
+          - "准备抓捕行动"
+
+      - time: "09:00"
+        chapter: 14
+        title: "实地侦查"
+        location: "郊区"
+        participants: [detective, assistant]
+        description: |
+          前往郊区实地侦查。
+          确认嫌疑人藏身地点。
+        findings:
+          - "发现张某租住的小屋"
+          - "观察到其行动规律"
+
+      - time: "11:00"
+        chapter: 15
+        title: "等待时机"
+        location: "监视点"
+        participants: [detective, assistant]
+        description: |
+          在附近监视点等待。
+          等待嫌疑人出现。
+        notes:
+          - "保持隐蔽"
+          - "等待支援到位"
+
+      - time: "13:00"
+        chapter: 16
+        title: "实施抓捕"
+        location: "张某住处"
+        participants: [detective, assistant, "支援警力"]
+        description: |
+          嫌疑人返回住处。
+          警方迅速行动，成功抓获。
+        outcome:
+          - "张某被捕"
+          - "现场搜出失窃物品"
+          - "嫌疑人供认不讳"
+
+      - time: "15:00"
+        chapter: 17
+        title: "审讯"
+        location: "警局审讯室"
+        participants: [detective]
+        description: |
+          对张某进行审讯。
+          还原完整作案过程。
+        confession:
+          - "利用维修监控的便利"
+          - "提前踩点并记录密码"
+          - "选择深夜作案"
+          - "计划继续作案但被抓获"
+
+      - time: "17:00"
+        chapter: 18
+        title: "物归原主"
+        location: "警局"
+        participants: [detective, assistant, "失主"]
+        description: |
+          失窃物品返还失主。
+          失主表示感谢。
+        resolution:
+          - "全部失窃物品追回"
+          - "案件圆满解决"
+          - "李警官学到很多"
+
+      - time: "18:00"
+        chapter: 19
+        title: "案件总结"
+        location: "警局"
+        participants: [detective, assistant]
+        description: |
+          摩根探长总结本案。
+          李警官撰写案件报告。
+        conclusions:
+          - "内部人员作案防不胜防"
+          - "技术手段需要严格管控"
+          - "团队合作是破案关键"
+        final_notes: "又一次成功破案"
+
+# 剧情控制设置
+story_settings:
+  # 自动推进到下一天
+  auto_progress_to_next_day: true
+
+  # 转天时间（晚上此时间后自动切换到下一天）
+  day_transition_time: "22:00"
+
+  # 检查间隔（分钟）
+  check_interval_minutes: 5
+
+  # 是否允许偏离
+  allow_deviation: true
+  deviation_threshold: 0.6
+
+# 跨天记忆设置
+cross_day_settings:
+  # 自动保存每天的重要事件
+  auto_save_daily_summary: true
+
+  # 第二天开始时，回顾前一天的重要事件
+  review_previous_day: true
+
+  # 保留多少天的详细记忆
+  detailed_memory_days: 3
+
+# 交互规则
+interaction_rules:
+  allow_user_chat: true
+  chat_affects_story: true
+
+  # 用户可以询问
+  user_can_ask:
+    - "案件进展"
+    - "当前线索"
+    - "下一步计划"
+    - "角色想法"
