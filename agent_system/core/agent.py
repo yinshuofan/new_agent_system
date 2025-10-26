@@ -8,6 +8,7 @@ from typing import Dict, Any, Optional, Callable
 from datetime import datetime
 
 from agent_system.core.event_bus import EventBus, Event, EventType
+from agent_system.core.context_manager import ContextManager
 from agent_system.modules.perception import PerceptionModule
 from agent_system.modules.memory import MemoryModule
 from agent_system.modules.emotion import EmotionModule
@@ -57,6 +58,9 @@ class Agent:
         self.cognition: Optional[CognitionModule] = None
         self.behavior: Optional[BehaviorModule] = None
 
+        # 上下文管理器
+        self.context_manager: Optional[ContextManager] = None
+
         # 状态
         self._running = False
         self._initialized = False
@@ -95,6 +99,12 @@ class Agent:
         await self.goal.initialize()
         await self.cognition.initialize()
         await self.behavior.initialize()
+
+        # 初始化上下文管理器（在所有模块之后）
+        self.context_manager = ContextManager(self)
+
+        # 将上下文管理器传递给认知模块
+        self.cognition.context_manager = self.context_manager
 
         # 注册默认工具
         await self._register_default_tools()

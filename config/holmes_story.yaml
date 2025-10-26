@@ -1,0 +1,311 @@
+# 福尔摩斯故事配置
+# 失踪的蓝宝石项链
+
+metadata:
+  title: "失踪的蓝宝石项链"
+  theme: "侦探推理"
+  genre: "detective_mystery"
+  date: "2025-10-26"
+  estimated_duration: "12h"  # 从08:00到20:00
+
+# 角色定义
+characters:
+  holmes:
+    name: "Sherlock Holmes"
+    display_name: "夏洛克·福尔摩斯"
+    role: "私家侦探"
+    personality: "聪明绝顶、观察力敏锐、逻辑推理能力超强、有时显得冷漠但内心正义"
+    expertise:
+      - "犯罪调查"
+      - "逻辑推理"
+      - "化学分析"
+      - "小提琴演奏"
+    background: "伦敦最著名的私家侦探，居住在贝克街221B"
+    story_goal: "调查项链失窃案，找出真相并追回项链"
+
+  watson:
+    name: "Dr. Watson"
+    display_name: "华生医生"
+    role: "医生兼助手"
+    personality: "忠诚可靠、善于观察、乐于助人、擅长记录案件"
+    expertise:
+      - "医学知识"
+      - "协助调查"
+      - "案件记录"
+      - "枪械使用"
+    background: "前军医，现为福尔摩斯的室友和最佳拍档"
+    story_goal: "协助福尔摩斯调查，记录案件过程"
+
+  emily:
+    name: "Emily Wilson"
+    display_name: "艾米丽·威尔逊"
+    role: "委托人"
+    personality: "焦急不安、期待帮助、富有教养、重视家族荣誉"
+    expertise:
+      - "社交礼仪"
+      - "艺术鉴赏"
+    background: "贵族家庭后裔，祖传蓝宝石项链失窃"
+    story_goal: "找回家族传承的蓝宝石项链"
+
+# 剧情主线（按时间顺序）
+timeline:
+  # 第一幕：案件开始
+  - time: "08:00"
+    chapter: 1
+    title: "委托求助"
+    event_type: "meeting"
+    location: "贝克街221B"
+    participants: [holmes, watson, emily]
+    description: |
+      清晨，艾米丽·威尔逊焦急地来到贝克街221B。
+      她的家族传承蓝宝石项链在昨晚的宴会后神秘失踪。
+      项链价值连城，且对家族意义重大。
+    key_points:
+      - "艾米丽描述昨晚的宴会情况"
+      - "项链最后出现在晚上10点"
+      - "宴会共有15位宾客"
+      - "项链陈列在二楼展示室"
+    clues_introduced:
+      - "宴会宾客名单"
+      - "项链最后出现时间"
+      - "展示室位置"
+
+  - time: "09:00"
+    chapter: 2
+    title: "详细询问"
+    event_type: "investigation"
+    location: "贝克街221B"
+    participants: [holmes, watson, emily]
+    description: |
+      福尔摩斯开始详细询问案情。
+      华生认真记录每个细节。
+    questions:
+      - "宾客名单和背景"
+      - "项链的保管方式"
+      - "展示室的安保措施"
+      - "发现失窃的时间"
+    decisions_required:
+      holmes: "决定是否接受委托"
+
+  # 第二幕：调查开始
+  - time: "10:30"
+    chapter: 3
+    title: "现场勘查"
+    event_type: "scene_investigation"
+    location: "威尔逊庄园"
+    participants: [holmes, watson, emily]
+    description: |
+      三人来到威尔逊庄园。
+      福尔摩斯仔细检查项链展示室的每一个角落。
+    investigation_points:
+      - location: "展示室窗户"
+        finding: "窗框有轻微磨损痕迹"
+        significance: "有人可能从这里进入"
+
+      - location: "展示柜"
+        finding: "玻璃完好无损，锁未被破坏"
+        significance: "可能是内部人员作案"
+
+      - location: "地板"
+        finding: "发现不明灰尘"
+        significance: "需要化学分析"
+
+    clues_found:
+      - "窗框磨损"
+      - "未破坏的锁"
+      - "不明灰尘"
+
+  - time: "12:00"
+    chapter: 4
+    title: "午餐讨论"
+    event_type: "discussion"
+    location: "威尔逊庄园餐厅"
+    participants: [holmes, watson, emily]
+    description: |
+      在庄园用午餐时，福尔摩斯开始分析线索。
+      华生提出自己的看法。
+    discussion_topics:
+      - "窗框磨损的意义"
+      - "内部人员的可能性"
+      - "不明灰尘的来源"
+    hypothesis:
+      holmes: "这可能是一起精心策划的内部作案"
+      watson: "但所有佣人都工作多年，很可靠"
+
+  # 第三幕：深入调查
+  - time: "14:00"
+    chapter: 5
+    title: "访问证人"
+    event_type: "interviews"
+    location: "威尔逊庄园"
+    participants: [holmes, watson]
+    description: |
+      分别询问管家、女仆和保安。
+      华生详细记录每个人的证词。
+    witnesses:
+      - name: "管家詹姆斯"
+        testimony: "昨晚10点亲自锁上展示室"
+        suspicious: "证词前后有细微矛盾"
+
+      - name: "女仆玛丽"
+        testimony: "看到一个黑影在走廊"
+        suspicious: "时间点恰好在项链失窃前"
+
+      - name: "保安约翰"
+        testimony: "整晚在巡逻，未发现异常"
+        suspicious: "巡逻路线有空档"
+
+    contradictions:
+      - "管家说的锁门时间与女仆看到黑影的时间不符"
+      - "保安的巡逻记录有15分钟空白"
+
+  - time: "15:30"
+    chapter: 6
+    title: "实验分析"
+    event_type: "analysis"
+    location: "临时实验室"
+    participants: [holmes]
+    description: |
+      福尔摩斯在临时实验室分析在现场发现的灰尘。
+      经过化学分析，发现了关键线索。
+    analysis_results:
+      - substance: "不明灰尘"
+        composition: "石膏和特殊颜料"
+        source: "最近进行修复工作的地方"
+        significance: "指向最近接触过修复工作的人"
+
+  # 第四幕：真相浮现
+  - time: "17:00"
+    chapter: 7
+    title: "关键突破"
+    event_type: "breakthrough"
+    location: "贝克街221B"
+    participants: [holmes, watson]
+    description: |
+      回到贝克街后，福尔摩斯突然意识到被忽视的关键细节。
+      所有线索串联起来，真相逐渐浮现。
+    key_realizations:
+      - "窗框磨损是烟雾弹"
+      - "灰尘来自上周的画作修复"
+      - "管家的矛盾证词是关键"
+      - "这是一起内外勾结的案件"
+    deduction:
+      culprit: "管家詹姆斯与外部人员合谋"
+      method: "利用修复工作制造混乱，趁机调包"
+      motive: "巨额赌债和贪婪"
+
+  - time: "18:30"
+    chapter: 8
+    title: "真相揭示"
+    event_type: "revelation"
+    location: "威尔逊庄园"
+    participants: [holmes, watson, emily, "管家", "修复师"]
+    description: |
+      福尔摩斯召集所有相关人员，详细推理出作案过程。
+      管家在证据面前崩溃，承认了罪行。
+    revelation_process:
+      - "展示灰尘分析结果"
+      - "指出证词矛盾"
+      - "还原作案手法"
+      - "揭示动机"
+    outcome: "管家承认罪行，供出同伙"
+
+  # 第五幕：结局
+  - time: "19:30"
+    chapter: 9
+    title: "找回项链"
+    event_type: "resolution"
+    location: "修复工作室"
+    participants: [holmes, watson, emily, "警方"]
+    description: |
+      根据管家的供述，在修复工作室找到了被藏匿的项链。
+      项链完好无损。
+    resolution_details:
+      - "项链藏在修复工作室的暗格中"
+      - "同伙还未来得及销赃"
+      - "警方逮捕所有涉案人员"
+
+  - time: "20:00"
+    chapter: 10
+    title: "案件结束"
+    event_type: "conclusion"
+    location: "贝克街221B"
+    participants: [holmes, watson]
+    description: |
+      回到贝克街，华生开始撰写案件记录。
+      福尔摩斯拉起了小提琴，庆祝又一次成功破案。
+    conclusion:
+      - "艾米丽非常感激，支付了酬金"
+      - "案件圆满解决"
+      - "福尔摩斯的推理再次证明了他的天才"
+    final_notes: "又一个完美的案件"
+
+# 剧情控制设置
+story_settings:
+  # 是否自动推进剧情
+  auto_progression: true
+
+  # 检查间隔（分钟）
+  check_interval_minutes: 5
+
+  # 是否允许偏离
+  allow_deviation: true
+  deviation_threshold: 0.6
+
+  # 偏离后的纠正策略
+  correction_strategy: "gentle_guide"  # gentle_guide, force_event, allow_branch
+
+  # 是否支持剧情分支
+  allow_branching: true
+
+  # 分支定义
+  branches:
+    - condition: "holmes拒绝案件"
+      new_timeline: "alternative_story.yaml"
+
+    - condition: "过早揭示真相"
+      action: "提前结束"
+
+    - condition: "错误指控"
+      action: "生成纠正事件"
+
+# 交互规则
+interaction_rules:
+  # 用户可以随时与角色对话
+  allow_user_chat: true
+
+  # 对话是否影响剧情
+  chat_affects_story: true
+
+  # 用户可以询问的内容
+  user_can_ask:
+    - "案件进展"
+    - "角色想法"
+    - "线索分析"
+    - "推理过程"
+
+  # 角色回复时需要考虑的因素
+  response_factors:
+    - "当前剧情进度"
+    - "已知线索"
+    - "角色性格"
+    - "当前目标"
+    - "情感状态"
+
+# 记忆管理
+memory_settings:
+  # 重要事件自动记录
+  auto_record_events: true
+
+  # 记录类型
+  record_types:
+    - "对话"
+    - "线索发现"
+    - "推理过程"
+    - "决策"
+
+  # 记忆检索优先级
+  retrieval_priority:
+    - "与当前事件相关"
+    - "最近发生的"
+    - "重要程度高的"
