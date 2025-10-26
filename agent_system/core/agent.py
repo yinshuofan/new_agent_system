@@ -29,7 +29,8 @@ class Agent:
         self,
         agent_id: str,
         name: str = "",
-        config: Optional[Dict[str, Any]] = None
+        config: Optional[Dict[str, Any]] = None,
+        use_llm: bool = True
     ):
         """
         初始化智能体
@@ -38,10 +39,12 @@ class Agent:
             agent_id: 智能体唯一ID
             name: 智能体名称
             config: 配置参数
+            use_llm: 是否使用LLM
         """
         self.agent_id = agent_id
         self.name = name or agent_id
         self.config = config or {}
+        self.use_llm = use_llm
 
         # 创建事件总线
         self._event_bus = EventBus()
@@ -80,7 +83,8 @@ class Agent:
         self.cognition = CognitionModule(
             self.agent_id,
             self._event_bus,
-            decision_strategy=self.config.get("decision_strategy")
+            decision_strategy=self.config.get("decision_strategy"),
+            use_llm=self.use_llm
         )
         self.behavior = BehaviorModule(self.agent_id, self._event_bus)
 

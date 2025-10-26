@@ -45,7 +45,8 @@ class AgentManager:
         agent_id: str,
         name: str = "",
         config: Optional[Dict[str, Any]] = None,
-        start_immediately: bool = True
+        start_immediately: bool = True,
+        use_llm: bool = True
     ) -> Agent:
         """
         创建并注册新智能体
@@ -55,6 +56,7 @@ class AgentManager:
             name: 智能体名称
             config: 配置参数
             start_immediately: 是否立即启动
+            use_llm: 是否使用LLM
 
         Returns:
             创建的智能体实例
@@ -69,7 +71,7 @@ class AgentManager:
             raise ValueError(f"Maximum number of agents ({self._max_agents}) reached")
 
         # 创建智能体
-        agent = Agent(agent_id, name, config)
+        agent = Agent(agent_id, name, config, use_llm=use_llm)
 
         # 设置消息和环境回调
         agent.set_message_callback(self._create_message_callback(agent_id))

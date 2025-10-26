@@ -4,11 +4,14 @@
 """
 
 import asyncio
+import json
 from typing import Dict, Any, List, Optional, Callable
 from datetime import datetime
 
 from agent_system.core.base import CognitionInterface
 from agent_system.core.event_bus import EventBus, EventType
+from agent_system.llm import get_llm_client, ModelType
+from agent_system.llm.prompt_manager import get_prompt_manager
 
 
 class CognitionModule(CognitionInterface):
@@ -21,11 +24,23 @@ class CognitionModule(CognitionInterface):
         self,
         agent_id: str,
         event_bus: EventBus,
-        decision_strategy: Optional[Callable] = None
+        decision_strategy: Optional[Callable] = None,
+        use_llm: bool = True
     ):
         super().__init__(agent_id, event_bus)
+        # LLM配置
+        self._use_llm = use_llm
+        self._llm_client = None
+        self._prompt_manager = None
+
         # 决策策略（可注入自定义策略，如LLM决策）
-        self._decision_strategy = decision_strategy or self._default_decision_strategy
+        if decision_strategy:
+            self._decision_strategy = decision_strategy
+        elif use_llm:
+            self._decision_strategy = self._llm_decision_strategy
+        else:
+            self._decision_strategy = self._default_decision_strategy
+
         # 认知状态（相当于"提示词/内存"）
         self._cognitive_state: Dict[str, Any] = {}
         # 决策历史
@@ -38,6 +53,11 @@ class CognitionModule(CognitionInterface):
     async def initialize(self) -> None:
         """初始化认知模块"""
         self._initialized = True
+
+        # 初始化LLM客户端
+        if self._use_llm:
+            self._llm_client = get_llm_client()
+            self._prompt_manager = get_prompt_manager()
 
         # 初始化认知状态
         self._cognitive_state = {
@@ -306,6 +326,10 @@ class CognitionModule(CognitionInterface):
         Returns:
             反思结果
         """
+        # 如果使用LLM，调用LLM反思
+        if self._use_llm and self._llm_client:
+            return await self._llm_reflection(context)
+
         # 简化的反思逻辑
         recent_decisions = context.get("recent_decisions", [])
         current_emotion = context.get("current_emotion", {})
@@ -336,6 +360,121 @@ class CognitionModule(CognitionInterface):
             "success_rate": success_rate,
             "timestamp": datetime.now().isoformat()
         }
+
+    async def _llm_decision_strategy(
+        self,
+        context: Dict[str, Any],
+        cognition_module: 'CognitionModule'
+    ) -> Dict[str, Any]:
+        """
+        LLM决策策略
+
+        Args:
+            context: 决策上下文
+            cognition_module: 认知模块实例
+
+        Returns:
+            决策结果
+        """
+        if not self._llm_client:
+            return await self._default_decision_strategy(context, cognition_module)
+
+        try:
+            # 构建提示词
+            system_prompt = self._prompt_manager.get_prompt("cognition", "system")
+
+            # 格式化上下文
+            situation = context.get("situation", "")
+            emotion = str(context.get("current_emotion", {}))
+            goals = str(context.get("active_goals", []))[:500]  # 限制长度
+            memories = str(context.get("recent_memories", []))[:500]
+
+            user_prompt = self._prompt_manager.get_prompt(
+                "cognition",
+                "make_decision",
+                situation=situation,
+                emotion=emotion,
+                goals=goals,
+                memories=memories
+            )
+
+            # 调用LLM
+            response = await self._llm_client.generate_json(
+                prompt=user_prompt,
+                system_prompt=system_prompt,
+                model_type=ModelType.FAST,
+                temperature=0.7
+            )
+
+            # 解析响应
+            if "parse_error" not in response:
+                return {
+                    "action": response.get("action", {"type": "observe"}),
+                    "reasoning": response.get("reasoning", "LLM decision"),
+                    "confidence": float(response.get("confidence", 0.7))
+                }
+            else:
+                # 解析失败，使用默认策略
+                return await self._default_decision_strategy(context, cognition_module)
+
+        except Exception as e:
+            print(f"LLM decision error: {e}")
+            return await self._default_decision_strategy(context, cognition_module)
+
+    async def _llm_reflection(self, context: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        LLM反思
+
+        Args:
+            context: 反思上下文
+
+        Returns:
+            反思结果
+        """
+        try:
+            # 构建提示词
+            system_prompt = self._prompt_manager.get_prompt("cognition", "system")
+
+            recent_decisions = str(context.get("recent_decisions", []))[:1000]
+            current_state = str(context)[:1000]
+
+            user_prompt = self._prompt_manager.get_prompt(
+                "cognition",
+                "reflect",
+                recent_decisions=recent_decisions,
+                current_state=current_state
+            )
+
+            # 调用LLM
+            response = await self._llm_client.generate_json(
+                prompt=user_prompt,
+                system_prompt=system_prompt,
+                model_type=ModelType.FAST,
+                temperature=0.7
+            )
+
+            # 解析响应
+            if "parse_error" not in response:
+                return {
+                    "insights": response.get("insights", []),
+                    "adjustments": response.get("adjustments", []),
+                    "success_rate": float(response.get("success_rate", 0.5)),
+                    "timestamp": datetime.now().isoformat()
+                }
+            else:
+                # 解析失败，使用默认反思
+                return await self._perform_reflection(context)
+
+        except Exception as e:
+            print(f"LLM reflection error: {e}")
+            # 回退到默认反思
+            recent_decisions = context.get("recent_decisions", [])
+            return {
+                "insights": ["LLM reflection failed, using fallback"],
+                "adjustments": [],
+                "success_rate": 0.5,
+                "timestamp": datetime.now().isoformat()
+            }
 
     # 事件处理器
 

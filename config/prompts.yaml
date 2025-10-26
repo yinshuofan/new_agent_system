@@ -1,0 +1,160 @@
+# 提示词配置文件
+# 各模块的LLM提示词模板
+
+# 认知模块提示词
+cognition:
+  system: "You are an intelligent agent's cognition module. Analyze situations and make decisions based on perception, memories, emotions, and goals."
+
+  make_decision: |
+    Analyze the situation and make a decision.
+
+    Situation: {situation}
+    Current Emotion: {emotion}
+    Active Goals: {goals}
+    Recent Memories: {memories}
+
+    Provide your decision in JSON format:
+    {{
+      "action": {{"type": "action_type", "parameters": {{}}}},
+      "reasoning": "explanation of your decision",
+      "confidence": 0.0-1.0
+    }}
+
+  reflect: |
+    Reflect on recent decisions and experiences.
+
+    Recent Decisions: {recent_decisions}
+    Current State: {current_state}
+
+    Provide reflection in JSON format:
+    {{
+      "insights": ["insight1", "insight2"],
+      "adjustments": ["adjustment1", "adjustment2"],
+      "success_rate": 0.0-1.0
+    }}
+
+# 情感模块提示词
+emotion:
+  system: "You are an emotion processing module. Analyze events and determine emotional responses."
+
+  process_emotion: |
+    Analyze the emotional impact of this event.
+
+    Trigger: {trigger}
+    Current Emotion: valence={valence}, arousal={arousal}
+
+    Provide emotion response in JSON format:
+    {{
+      "valence": -1.0 to 1.0 (negative to positive),
+      "arousal": 0.0 to 1.0 (calm to excited),
+      "primary_emotion": "joy/sadness/anger/fear/surprise/disgust/neutral",
+      "intensity": 0.0 to 1.0
+    }}
+
+# 目标模块提示词
+goal:
+  system: "You are a goal management module. Generate and evaluate goals based on needs."
+
+  generate_goal: |
+    Generate a new goal based on current needs.
+
+    Urgent Needs: {needs}
+    Current Context: {context}
+
+    Provide goal in JSON format:
+    {{
+      "title": "goal title",
+      "description": "detailed description",
+      "priority": "HIGH/MEDIUM/LOW",
+      "related_needs": ["need1", "need2"]
+    }}
+
+  evaluate_progress: |
+    Evaluate progress towards this goal.
+
+    Goal: {goal}
+    Recent Actions: {actions}
+
+    Provide evaluation with progress estimate (0.0-1.0).
+
+# 感知模块提示词
+perception:
+  system: "You are a perception module. Analyze and extract key information from inputs."
+
+  analyze_perception: |
+    Analyze this perception and extract key information.
+
+    Input: {perception}
+
+    Provide analysis in JSON format:
+    {{
+      "key_points": ["point1", "point2"],
+      "entities": ["entity1", "entity2"],
+      "importance": 0.0-1.0
+    }}
+
+# 记忆模块提示词
+memory:
+  system: "You are a memory management module. Summarize events and retrieve relevant memories."
+
+  summarize_memory: |
+    Create a concise summary of this event for long-term storage.
+
+    Event: {event}
+
+    Provide a clear, concise summary (1-2 sentences).
+
+  retrieve_relevant: |
+    Identify the most relevant memories for this query.
+
+    Query: {query}
+    Available Memories: {memories}
+
+    List the IDs of relevant memories in order of relevance.
+
+# 剧情系统提示词
+story:
+  system: "You are a story narrative manager. Generate and maintain coherent storylines."
+
+  generate_story: |
+    Generate a story scenario based on the theme.
+
+    Theme: {theme}
+    Agent Characters: {characters}
+
+    Provide story in JSON format:
+    {{
+      "title": "story title",
+      "setting": "time and place description",
+      "background": "background context",
+      "plot_points": ["event1", "event2", "event3"],
+      "initial_goals": {{"agent_id": "goal description"}}
+    }}
+
+  check_deviation: |
+    Check if the agent's action aligns with the story narrative.
+
+    Story Context: {story}
+    Agent Action: {action}
+
+    Provide analysis in JSON format:
+    {{
+      "aligned": true/false,
+      "deviation_level": 0.0-1.0,
+      "suggestion": "how to guide back to story if needed"
+    }}
+
+  generate_event: |
+    Generate the next story event based on current state.
+
+    Story: {story}
+    Current Situation: {situation}
+    Agent States: {agents}
+
+    Provide next event in JSON format:
+    {{
+      "event_type": "environment/interaction/challenge",
+      "description": "what happens",
+      "affected_agents": ["agent1", "agent2"],
+      "impact": "how this affects the story"
+    }}
