@@ -222,6 +222,14 @@ class AgentScheduler:
             enabled=True
         )
 
+        # 4. 剧情演绎检查触发器
+        self.add_trigger(
+            "story_narrative_check",
+            5.0 * 60,  # 5分钟
+            self._on_story_narrative_check,
+            enabled=True
+        )
+
     async def _on_periodic_update(self) -> None:
         """定期更新回调"""
         if not self.agent.is_running():
@@ -264,6 +272,32 @@ class AgentScheduler:
         if len(active_goals) == 0:
             # 如果没有活跃目标，考虑生成新目标
             await self._maybe_generate_goal()
+
+    async def _on_story_narrative_check(self) -> None:
+        """
+        剧情演绎检查回调
+        检查智能体日程是否偏离剧情，触发修正事件，并记录到记忆
+        """
+        if not self.agent.is_running():
+            return
+
+        # 检查是否有story_engine
+        story_engine = getattr(self.agent, 'story_engine', None)
+        if not story_engine:
+            return
+
+        try:
+            # 1. 检查并修正偏离
+            deviation_events = await story_engine.check_and_correct_deviation()
+
+            if deviation_events:
+                print(f"[StoryNarrative] 检测到{len(deviation_events)}个偏离，已触发修正事件")
+
+            # 2. 记录已完成的日程到记忆
+            await story_engine.record_to_memory(self.agent.agent_id)
+
+        except Exception as e:
+            print(f"[StoryNarrative] 剧情演绎检查失败: {e}")
 
     async def _generate_environment_update(self) -> Optional[Dict[str, Any]]:
         """

@@ -114,22 +114,135 @@ memory:
 
 # 剧情系统提示词
 story:
-  system: "You are a story narrative manager. Generate and maintain coherent storylines."
+  system: "You are a professional story narrative manager. Create coherent, engaging storylines and character schedules."
 
-  generate_story: |
-    Generate a story scenario based on the theme.
+  # 生成剧情大纲
+  generate_outline: |
+    Create a detailed story outline for a day-long narrative.
 
     Theme: {theme}
-    Agent Characters: {characters}
+    Date: {date}
+    Characters:
+    {characters}
 
-    Provide story in JSON format:
+    Generate a comprehensive story outline in JSON format:
     {{
-      "title": "story title",
-      "setting": "time and place description",
-      "background": "background context",
-      "plot_points": ["event1", "event2", "event3"],
-      "initial_goals": {{"agent_id": "goal description"}}
+      "title": "compelling story title",
+      "time_period": "一天",
+      "setting": "detailed setting description (time, place, atmosphere)",
+      "main_plot_points": [
+        "Morning: opening event",
+        "Late Morning: development",
+        "Afternoon: rising action",
+        "Evening: climax",
+        "Night: resolution"
+      ],
+      "character_roles": {{
+        "agent_id": "specific role in the story"
+      }},
+      "character_goals": {{
+        "agent_id": "character's main objective for the day"
+      }},
+      "key_events": [
+        {{"time": "09:00", "event": "description", "participants": ["agent_id"]}},
+      ],
+      "narrative_constraints": [
+        "Must involve all characters",
+        "Keep the theme consistent"
+      ]
     }}
+
+  # 生成角色日程
+  generate_schedule: |
+    Create a detailed daily schedule for a character based on the story outline.
+
+    Character: {character_name} (ID: {agent_id})
+    Role: {character_role}
+    Goal: {character_goal}
+    Story: {story_title}
+    Date: {date}
+
+    Plot Points:
+    {plot_points}
+
+    Generate a realistic daily schedule in JSON format:
+    {{
+      "schedule_items": [
+        {{
+          "start_time": "09:00",
+          "end_time": "10:30",
+          "duration_minutes": 90,
+          "activity": "specific activity name",
+          "description": "detailed description of what the character does",
+          "location": "where this takes place",
+          "related_agents": ["other_agent_ids"],
+          "related_plot_point": "which plot point this supports"
+        }},
+        ...
+      ]
+    }}
+
+    Requirements:
+    - Cover the full day (08:00-22:00)
+    - Each activity should advance the story
+    - Include meals, breaks, and transitions
+    - Activities must align with character's role and goal
+    - Times should be realistic and not overlap
+
+  # 检查日程对齐度
+  check_schedule_alignment: |
+    Analyze how well the character's schedule aligns with the story outline.
+
+    Story Outline:
+    {outline}
+
+    Character Schedule:
+    {schedule}
+
+    Evaluate the alignment in JSON format:
+    {{
+      "alignment_score": 0.0-1.0,
+      "item_scores": {{
+        "schedule_id": score
+      }},
+      "issues": [
+        "description of misalignments"
+      ],
+      "recommendations": [
+        "how to improve alignment"
+      ]
+    }}
+
+    Scoring criteria:
+    - 1.0: Perfect alignment with story
+    - 0.7-0.9: Good alignment, minor deviations
+    - 0.4-0.6: Moderate deviations
+    - 0.0-0.3: Significant deviations from story
+
+  # 生成纠正事件
+  generate_correction_event: |
+    Generate an environment event to guide the character back to the main story.
+
+    Character: {agent_id}
+    Expected Plot: {expected_plot}
+    Character Goal: {character_goal}
+
+    Deviations:
+    {deviations}
+
+    Create a natural story event in JSON format:
+    {{
+      "event_description": "what happens in the story world",
+      "guidance": "subtle hint about the main plot",
+      "urgency": "low/medium/high",
+      "suggested_action": "what the character should consider doing"
+    }}
+
+    Requirements:
+    - Event should feel natural, not forced
+    - Guide the character gently toward the main plot
+    - Don't break immersion
+    - Make it relevant to their current situation
 
   check_deviation: |
     Check if the agent's action aligns with the story narrative.
