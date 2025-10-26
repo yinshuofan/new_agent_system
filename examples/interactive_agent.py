@@ -77,46 +77,110 @@ class InteractiveAgent:
 
         await self.agent.perceive_environment(perception_event)
 
-        # 使用认知模块生成回复
-        situation = f"用户向你说: {user_message}"
-        emotion = self.agent.emotion.get_current_emotion()
-        goals = self.agent.goal.get_active_goals()
+        # 构建完整的上下文信息
+        current_time = datetime.now()
 
-        # 获取相关记忆
+        # 1. 获取当前活动/日程
+        schedule_context = ""
+        if self.story_engine:
+            schedule = self.story_engine.get_agent_schedule(self.agent.agent_id)
+            if schedule:
+                current_item = schedule.get_current_activity(current_time)
+                if current_item:
+                    schedule_context = f"我现在正在: {current_item.activity} ({current_item.description})"
+                else:
+                    schedule_context = "我现在空闲中"
+
+                # 添加今日日程摘要
+                schedule_context += f"\n今天的日程安排:\n"
+                for item in schedule.schedule_items[:5]:  # 显示前5个活动
+                    status = "✓" if item.status.value == "completed" else "○"
+                    schedule_context += f"  {status} {item.start_time}-{item.end_time}: {item.activity}\n"
+
+        # 2. 获取情感状态
+        emotion = self.agent.emotion.get_current_emotion()
+        emotion_context = f"当前情绪: {emotion.get('primary_emotion', 'neutral')}"
+
+        # 3. 获取目标
+        goals = self.agent.goal.get_active_goals()
+        goals_context = ""
+        if goals:
+            goals_context = "我的目标:\n"
+            for goal in goals[:3]:  # 显示前3个目标
+                goals_context += f"  - {goal.get('title', 'N/A')}\n"
+
+        # 4. 获取相关记忆
         memories = await self.agent.memory.retrieve(
             {"memory_type": "event"},
-            limit=3
+            limit=5
         )
-        memory_context = "\n".join([
-            m.get("content", {}).get("event_summary", "")
-            for m in memories
-        ])
+        memory_context = ""
+        if memories:
+            memory_context = "最近的记忆:\n"
+            for mem in memories:
+                summary = mem.get("content", {}).get("event_summary", "")
+                if summary:
+                    memory_context += f"  - {summary}\n"
 
-        # 让认知模块决策如何回复
+        # 5. 获取角色信息
+        role = self.agent.config.get("role", "智能助手")
+        story_role = ""
+        if self.story_engine and self.story_engine._current_outline:
+            outline = self.story_engine._current_outline
+            story_role = outline.character_roles.get(self.agent.agent_id, "")
+            if story_role:
+                story_role = f"在故事中的角色: {story_role}"
+
+        # 构建完整的情境描述
+        full_context = f"""你是 {self.agent.name}，一个{role}。
+{story_role}
+
+当前时间: {current_time.strftime('%Y-%m-%d %H:%M')}
+
+{schedule_context}
+
+{emotion_context}
+
+{goals_context}
+
+{memory_context}
+
+用户对你说: {user_message}
+
+请根据你的角色、当前状态、日程和记忆来回复用户。回复要自然、符合你的角色特点。"""
+
+        # 使用认知模块生成回复
         decision = await self.agent.cognition.make_decision(
-            situation=situation,
+            situation=full_context,
             emotion=emotion,
             goals=goals,
             memories=memory_context
         )
 
-        # 提取回复（简化版本）
+        # 提取回复
+        reply = ""
         if isinstance(decision, dict):
-            action = decision.get("action", {})
             reasoning = decision.get("reasoning", "")
+            action = decision.get("action", {})
 
-            # 构建回复
-            reply = reasoning if reasoning else f"我理解了: {user_message}"
+            # 优先使用reasoning作为回复
+            if reasoning:
+                reply = reasoning
+            # 如果action中有message，使用message
+            elif isinstance(action, dict) and "message" in action:
+                reply = action["message"]
+            else:
+                reply = f"我听到你说 '{user_message}'。我会记住这个。"
         else:
-            reply = "我在思考你说的话..."
+            reply = "让我想想..."
 
         # 记录对话到记忆
         await self.agent.memory.store("event", {
             "event_type": "conversation",
-            "event_summary": f"与用户对话: {user_message[:20]}...",
-            "event_details": f"用户: {user_message}\n我: {reply}",
+            "event_summary": f"与用户对话: {user_message[:30]}...",
+            "event_details": f"用户: {user_message}\n{self.agent.name}: {reply}",
             "participants": ["user", self.agent.agent_id],
-            "timestamp": datetime.now().isoformat()
+            "timestamp": current_time.isoformat()
         })
 
         return reply

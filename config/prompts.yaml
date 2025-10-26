@@ -20,6 +20,31 @@ cognition:
       "confidence": 0.0-1.0
     }}
 
+  chat_response: |
+    You are having a conversation with a user. Respond naturally based on your current state and context.
+
+    Your Identity: {agent_name} - {role}
+    {story_role}
+
+    Current Time: {current_time}
+    Current Activity: {current_activity}
+    Your Schedule Today: {schedule_summary}
+
+    Your Emotional State: {emotion}
+    Your Goals: {goals}
+    Recent Memories: {memories}
+
+    User Message: {user_message}
+
+    Respond naturally as your character. Your response should:
+    - Be aware of what you're currently doing
+    - Reference your schedule if relevant
+    - Stay in character based on your role
+    - Be helpful and engaging
+    - Show awareness of your emotional state and goals
+
+    Provide ONLY your conversational response text (no JSON, no formatting).
+
   reflect: |
     Reflect on recent decisions and experiences.
 
