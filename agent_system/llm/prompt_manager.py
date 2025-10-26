@@ -111,8 +111,12 @@ class PromptManager:
                 "system": "You are managing memory storage and retrieval."
             },
             "story": {
-                "generate_story": "Generate a story scenario.\n\nTheme: {theme}\nCharacters: {characters}\n\nProvide story in JSON format with 'setting', 'plot_points', and 'goals' fields.",
-                "check_deviation": "Check if agent actions deviate from the story.\n\nStory: {story}\nAgent action: {action}\n\nProvide analysis in JSON format.",
+                "generate_outline": "Generate a story outline.\n\nTheme: {theme}\nCharacters: {characters}\n\nProvide story in JSON format with 'title', 'setting', 'main_plot_points', 'character_roles', and 'character_goals' fields.",
+                "generate_schedule": "Create a daily schedule for a character.\n\nCharacter: {character_name}\nRole: {character_role}\nGoal: {character_goal}\nPlot Points: {plot_points}\n\nProvide schedule in JSON format with 'schedule_items' array containing start_time, end_time, activity, description, location, related_agents, and related_plot_point.",
+                "check_schedule_alignment": "Analyze schedule alignment with story.\n\nOutline: {outline}\nSchedule: {schedule}\n\nProvide JSON with 'alignment_score', 'item_scores', 'issues', and 'recommendations'.",
+                "generate_correction_event": "Generate an event to guide character back to plot.\n\nCharacter: {agent_id}\nExpected Plot: {expected_plot}\nDeviations: {deviations}\n\nProvide JSON with 'event_description', 'guidance', 'urgency', and 'suggested_action'.",
+                "check_deviation": "Check if agent action aligns with story.\n\nStory: {story}\nAction: {action}\n\nProvide JSON with 'aligned', 'deviation_level', and 'suggestion'.",
+                "generate_event": "Generate next story event.\n\nStory: {story}\nSituation: {situation}\n\nProvide JSON with 'event_type', 'description', 'affected_agents', and 'impact'.",
                 "system": "You are managing story narrative."
             }
         }
