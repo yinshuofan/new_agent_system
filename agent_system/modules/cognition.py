@@ -168,6 +168,18 @@ class CognitionModule(CognitionInterface):
 
         return decision
 
+    async def decide(self, context: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        做出决策（make_decision的别名，提供更简洁的接口）
+
+        Args:
+            context: 决策上下文
+
+        Returns:
+            决策结果
+        """
+        return await self.make_decision(context)
+
     async def reflect(self) -> Dict[str, Any]:
         """
         自我反思
