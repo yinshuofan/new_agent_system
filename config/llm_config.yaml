@@ -1,0 +1,39 @@
+# LLM配置文件
+
+# OpenAI API配置
+openai:
+  # API Key（必需）
+  # 获取方式：https://platform.openai.com/api-keys
+  api_key: "your-openai-api-key-here"
+
+  # Base URL（可选，用于代理或兼容服务）
+  # 默认：https://api.openai.com/v1
+  # base_url: "https://api.openai.com/v1"
+
+  # 模型映射
+  models:
+    fast: "gpt-3.5-turbo"      # 快速模型
+    accurate: "gpt-4"           # 精确模型
+    reasoning: "o1-preview"     # 推理模型
+
+  # 连接池配置
+  connection_pool:
+    max_connections: 10         # 最大并发连接数
+    timeout: 60.0              # 超时时间（秒）
+    max_retries: 3             # 最大重试次数
+
+# 环境变量支持
+# 您也可以通过环境变量设置API key：
+# export OPENAI_API_KEY="your-api-key"
+# 环境变量将覆盖此配置文件中的值
+
+# 其他LLM服务（未来支持）
+# anthropic:
+#   api_key: "your-anthropic-api-key"
+#   models:
+#     fast: "claude-3-haiku"
+#     accurate: "claude-3-opus"
+
+# azure:
+#   api_key: "your-azure-api-key"
+#   endpoint: "your-azure-endpoint"

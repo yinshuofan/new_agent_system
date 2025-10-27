@@ -10,6 +10,10 @@ from agent_system.llm.llm_client import (
     get_llm_client,
     close_llm
 )
+from agent_system.llm.config_loader import (
+    load_llm_config,
+    get_api_key_status
+)
 
 __all__ = [
     "LLMClient",
@@ -17,5 +21,7 @@ __all__ = [
     "ModelType",
     "initialize_llm",
     "get_llm_client",
-    "close_llm"
+    "close_llm",
+    "load_llm_config",
+    "get_api_key_status"
 ]
