@@ -1,0 +1,395 @@
+# 长期剧情配置示例
+# 支持 1000+ 天的剧情配置，仅需几百行
+
+metadata:
+  title: "侦探事务所模拟"
+  start_date: "2025-01-01"
+  duration_days: 1000  # 1000天！
+  use_llm: true
+
+# ==================== 日常活动模板 ====================
+# 定义重复的日常活动模式，大大减少配置量
+
+daily_templates:
+  # 工作日日常
+  weekday_routine:
+    name: "工作日日常"
+    applicable_days: [1, 2, 3, 4, 5]  # 周一到周五
+    priority: 1
+    activities:
+      - time: "07:00"
+        end_time: "08:00"
+        activity: "晨间准备"
+        location: "家中"
+        description: "起床、洗漱、早餐"
+        importance: 0.3
+
+      - time: "08:00"
+        end_time: "09:00"
+        activity: "通勤"
+        location: "路上"
+        description: "前往事务所"
+        importance: 0.2
+
+      - time: "09:00"
+        end_time: "12:00"
+        activity: "办公时间"
+        location: "事务所"
+        description: "处理案件、接待客户"
+        importance: 0.7
+
+      - time: "12:00"
+        end_time: "13:00"
+        activity: "午餐"
+        location: "餐厅"
+        description: "午餐休息"
+        importance: 0.4
+
+      - time: "13:00"
+        end_time: "18:00"
+        activity: "办公时间"
+        location: "事务所"
+        description: "继续工作"
+        importance: 0.7
+
+      - time: "18:00"
+        end_time: "19:00"
+        activity: "通勤"
+        location: "路上"
+        description: "返回家中"
+        importance: 0.2
+
+      - time: "19:00"
+        end_time: "22:00"
+        activity: "自由时间"
+        location: "家中"
+        description: "放松、阅读、思考案件"
+        importance: 0.5
+
+      - time: "22:00"
+        end_time: "23:00"
+        activity: "睡前准备"
+        location: "家中"
+        description: "洗漱、准备就寝"
+        importance: 0.3
+
+  # 周末日常
+  weekend_routine:
+    name: "周末日常"
+    applicable_days: [6, 7]  # 周六周日
+    priority: 1
+    activities:
+      - time: "09:00"
+        end_time: "10:00"
+        activity: "悠闲起床"
+        location: "家中"
+        description: "睡个懒觉"
+        importance: 0.5
+
+      - time: "10:00"
+        end_time: "12:00"
+        activity: "个人爱好"
+        location: "家中/户外"
+        description: "阅读、运动或其他爱好"
+        importance: 0.6
+
+      - time: "12:00"
+        end_time: "13:00"
+        activity: "午餐"
+        location: "家中/餐厅"
+        importance: 0.4
+
+      - time: "13:00"
+        end_time: "18:00"
+        activity: "自由活动"
+        location: "各处"
+        description: "外出或在家休息"
+        importance: 0.5
+
+      - time: "18:00"
+        end_time: "22:00"
+        activity: "晚间休闲"
+        location: "家中"
+        description: "看书、看电影、思考"
+        importance: 0.5
+
+# ==================== 故事阶段 ====================
+# 定义长期故事弧线，每个阶段包含一个主题和关键事件
+
+story_phases:
+  # 阶段1：新手侦探（第1-100天）
+  phase_1:
+    title: "新手侦探"
+    day_range: [1, 100]
+    theme: "刚开始独立执业，接手小案件，积累经验"
+    description: "主角刚刚开设私人侦探事务所，主要处理寻物、调查等小案件"
+
+    key_events:
+      - trigger_day: 1
+        time: "10:00"
+        activity: "事务所开业"
+        location: "贝克街221B"
+        description: "正式开业，挂上招牌"
+        importance: 0.9
+        participants: ["holmes"]
+
+      - trigger_day: 7
+        time: "14:00"
+        activity: "第一个客户"
+        location: "事务所"
+        description: "接待第一位付费客户，寻找丢失的宠物猫"
+        importance: 0.8
+        participants: ["holmes", "client_1"]
+
+      - trigger_day: 30
+        time: "10:00"
+        activity: "小有名气"
+        location: "事务所"
+        description: "成功破获几个小案子，开始在社区有些名气"
+        importance: 0.7
+        participants: ["holmes"]
+
+      - trigger_day: 90
+        time: "15:00"
+        activity: "转折点"
+        location: "事务所"
+        description: "接到一个看似简单但实际复杂的案件"
+        importance: 0.9
+        participants: ["holmes", "mysterious_client"]
+
+    character_goals:
+      holmes:
+        - "建立事务所声誉"
+        - "完成10个案件"
+        - "积累办案经验"
+
+  # 阶段2：崭露头角（第101-300天）
+  phase_2:
+    title: "崭露头角"
+    day_range: [101, 300]
+    theme: "处理更复杂的案件，开始涉及刑事案件"
+    description: "能力逐渐被认可，开始接手更有挑战性的案件"
+
+    key_events:
+      - trigger_day: 120
+        time: "09:00"
+        activity: "警方合作"
+        location: "警局"
+        description: "警方首次邀请协助调查一起盗窃案"
+        importance: 0.9
+        participants: ["holmes", "inspector_lestrade"]
+
+      - trigger_day: 180
+        time: "14:00"
+        activity: "重大案件"
+        location: "案发现场"
+        description: "介入一起谋杀案调查"
+        importance: 1.0
+        participants: ["holmes", "watson"]
+
+      - trigger_day: 250
+        time: "16:00"
+        activity: "媒体关注"
+        location: "事务所"
+        description: "成功破案后被媒体报道"
+        importance: 0.8
+        participants: ["holmes", "reporter"]
+
+    character_goals:
+      holmes:
+        - "与警方建立合作关系"
+        - "破获第一起重大刑事案件"
+        - "培养助手Watson"
+
+  # 阶段3：名声鹊起（第301-600天）
+  phase_3:
+    title: "名声鹊起"
+    day_range: [301, 600]
+    theme: "成为知名侦探，处理高难度案件"
+    description: "已是颇有名气的侦探，各种复杂案件接踵而来"
+
+    key_events:
+      - trigger_day: 350
+        time: "10:00"
+        activity: "国际案件"
+        location: "事务所"
+        description: "接到第一个涉及国际的案件"
+        importance: 0.9
+
+      - trigger_day: 450
+        time: "15:00"
+        activity: "宿敌出现"
+        location: "神秘地点"
+        description: "遇到终生对手Moriarty"
+        importance: 1.0
+        participants: ["holmes", "moriarty"]
+
+      - trigger_day: 550
+        time: "11:00"
+        activity: "危机时刻"
+        location: "废弃工厂"
+        description: "被宿敌设计陷入危险"
+        importance: 1.0
+
+    character_goals:
+      holmes:
+        - "解决国际案件"
+        - "对抗Moriarty"
+        - "保护身边的人"
+
+  # 阶段4：巅峰对决（第601-1000天）
+  phase_4:
+    title: "巅峰对决"
+    day_range: [601, 1000]
+    theme: "与Moriarty的终极对决"
+    description: "与终身对手的智力较量进入白热化"
+
+    key_events:
+      - trigger_day: 700
+        time: "20:00"
+        activity: "关键线索"
+        location: "伦敦塔桥"
+        description: "发现Moriarty计划的关键证据"
+        importance: 0.9
+
+      - trigger_day: 850
+        time: "16:00"
+        activity: "最终计划"
+        location: "秘密会议"
+        description: "制定对抗Moriarty的最终计划"
+        importance: 1.0
+
+      - trigger_day: 950
+        time: "18:00"
+        activity: "终极对决"
+        location: "莱辛巴赫瀑布"
+        description: "与Moriarty的最终对决"
+        importance: 1.0
+        participants: ["holmes", "moriarty"]
+
+    character_goals:
+      holmes:
+        - "阻止Moriarty的阴谋"
+        - "保护伦敦安全"
+        - "完成作为侦探的使命"
+
+# ==================== 事件生成规则 ====================
+# 定义自动生成的事件类型和频率
+
+event_rules:
+  # 新案件（每周随机）
+  new_case:
+    event_type: "case"
+    frequency: "weekly"
+    probability: 0.7
+    applicable_phases: ["phase_1", "phase_2", "phase_3", "phase_4"]
+    templates:
+      - time: "10:00"
+        activity: "新案件委托"
+        location: "事务所"
+        description: "客户来访，委托调查案件"
+        importance: 0.8
+        participants: ["holmes", "client"]
+
+      - time: "14:30"
+        activity: "紧急案件"
+        location: "事务所"
+        description: "接到紧急案件电话"
+        importance: 0.9
+        participants: ["holmes"]
+
+  # 案件进展（每天有30%概率）
+  case_progress:
+    event_type: "investigation"
+    frequency: "random"
+    probability: 0.3
+    applicable_phases: ["phase_1", "phase_2", "phase_3", "phase_4"]
+    templates:
+      - time: "10:00"
+        activity: "现场调查"
+        location: "案发现场"
+        description: "前往现场收集证据"
+        importance: 0.7
+
+      - time: "11:00"
+        activity: "访谈证人"
+        location: "证人家中"
+        description: "访问相关证人"
+        importance: 0.6
+
+      - time: "15:00"
+        activity: "实验室分析"
+        location: "实验室"
+        description: "分析收集的证据"
+        importance: 0.7
+
+  # 社交活动（每月1-2次）
+  social_event:
+    event_type: "social"
+    frequency: "monthly"
+    probability: 0.5
+    templates:
+      - time: "19:00"
+        activity: "社交晚宴"
+        location: "俱乐部"
+        description: "参加社交活动，拓展人脉"
+        importance: 0.5
+
+  # 休闲活动（随机）
+  leisure:
+    event_type: "leisure"
+    frequency: "random"
+    probability: 0.2
+    templates:
+      - time: "15:00"
+        activity: "音乐会"
+        location: "音乐厅"
+        description: "欣赏音乐放松心情"
+        importance: 0.4
+
+      - time: "14:00"
+        activity: "拜访朋友"
+        location: "朋友家"
+        description: "拜访老朋友叙旧"
+        importance: 0.5
+
+# ==================== LLM生成配置 ====================
+# 可选：使用LLM动态生成内容
+
+llm_generation:
+  enabled: true
+  generate_on_demand: true  # 按需生成，而非预生成
+  generation_interval: 10  # 每10天生成一次
+  context_window: 7  # 考虑最近7天的上下文
+
+  # 生成提示模板
+  prompt_template: |
+    基于以下信息，生成第{day_number}天的剧情内容：
+
+    当前阶段：{phase_title}
+    阶段主题：{phase_theme}
+    最近事件：{recent_events}
+    角色状态：{character_state}
+    当前目标：{current_goals}
+
+    请生成2-3个适合今天的事件，包括：
+    - 时间
+    - 活动名称
+    - 地点
+    - 描述
+    - 重要性（0-1）
+
+# ==================== 配置说明 ====================
+# 1. 日常模板（daily_templates）会自动应用到匹配的日期
+# 2. 故事阶段（story_phases）定义长期故事弧线
+# 3. 关键事件（key_events）在特定天数触发
+# 4. 事件规则（event_rules）按频率自动生成事件
+# 5. 最终日程 = 日常模板 + 阶段事件 + 规则事件 + LLM生成（可选）
+
+# ==================== 优势 ====================
+# ✅ 1000天配置仅需~500行（vs 传统方式需要~50,000行）
+# ✅ 易于维护和修改
+# ✅ 模板复用减少重复
+# ✅ 规则驱动自动生成变化
+# ✅ LLM动态生成保证多样性
+# ✅ 分层架构清晰易懂
