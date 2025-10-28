@@ -88,7 +88,7 @@ class PromptManager:
         # 最简化的默认提示词
         default_prompts = {
             "cognition": {
-                "make_decision": "Based on the current situation, make a decision.\n\nSituation: {situation}\n\nProvide your decision in JSON format with 'action', 'reasoning', and 'confidence' fields.",
+                "make_decision": "Based on the current situation, make a decision.\n\nSituation: {situation}\n\nProvide your decision in JSON format with 'action', 'reasoning', and 'confidence' fields.'action'参数中必须包含'type'参数，用于表明你要执行的操作类型，例如'send_message'、'think'等。",
                 "reflect": "Reflect on recent decisions and experiences.\n\nRecent decisions: {recent_decisions}\n\nProvide insights and adjustments in JSON format.",
                 "system": "You are an intelligent agent making decisions based on perception, memory, emotion, and goals."
             },
