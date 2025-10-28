@@ -155,7 +155,7 @@ class Agent:
         action = decision.get("action", {})
         if action.get("type") == "send_message":
             # 这里应该生成回复内容（可以通过LLM）
-            response_message = f"Response to: {message}"
+            response_message = f"Response: {decision}"
             await self.behavior.execute_action({
                 "tool_name": "send_message",
                 "parameters": {
