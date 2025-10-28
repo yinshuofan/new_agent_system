@@ -1,0 +1,27 @@
+# LLM 配置文件
+# 支持 OpenAI 和兼容 OpenAI 的 API（如豆包）
+
+# 豆包配置示例
+doubao:
+  api_key: "cd8b23c5-45f1-48a8-9009-e1ba7f592cfe"
+  base_url: "https://ark.cn-beijing.volces.com/api/v3"
+  models:
+    fast: "doubao-seed-1-6-251015"
+    accurate: "doubao-seed-1-6-251015"
+    reasoning: "doubao-seed-1-6-251015"
+  max_connections: 5
+  timeout: 60.0
+
+# OpenAI 配置示例
+openai:
+  api_key: "sk-..."
+  base_url: null  # 使用默认 OpenAI endpoint
+  models:
+    fast: "gpt-3.5-turbo"
+    accurate: "gpt-4"
+    reasoning: "o1-preview"
+  max_connections: 10
+  timeout: 60.0
+
+# 当前使用的配置
+active: "doubao"  # 可选: "doubao" 或 "openai"
