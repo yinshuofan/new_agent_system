@@ -268,6 +268,153 @@ class Agent:
         """获取事件总线（用于外部监听）"""
         return self._event_bus
 
+    # ===== 高层API - 简化使用 =====
+
+    async def perform_autonomous_action(
+        self,
+        possible_actions: Optional[list] = None,
+        context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """
+        执行自主行动（简化API）
+
+        Args:
+            possible_actions: 可选的行动列表（如 ["检查现场", "询问证人"]）
+            context: 额外上下文（如剧情信息）
+
+        Returns:
+            行动结果：{"action": "行动描述", "success": True/False}
+        """
+        if not self._running:
+            return {"action": "未运行", "success": False}
+
+        # 获取可能的行动
+        if possible_actions is None:
+            possible_actions = self.config.get("possible_actions", ["思考", "观察"])
+
+        # 构建决策上下文
+        decision_context = {
+            "situation": context.get("situation", "需要采取行动") if context else "需要采取行动",
+            "possible_actions": possible_actions,
+            "agent_role": self.config.get("role", ""),
+            "agent_personality": self.config.get("personality", ""),
+            "story_context": context.get("story_context", "") if context else ""
+        }
+
+        # 使用LLM决定行动（如果可用）
+        if self.use_llm:
+            try:
+                from agent_system.llm import get_llm_client, ModelType
+                llm_client = get_llm_client()
+
+                if llm_client:
+                    prompt = f"""你是{self.name}，{decision_context['agent_role']}。
+性格：{decision_context['agent_personality']}
+
+{decision_context['situation']}
+
+可选行动：{', '.join(possible_actions)}
+
+从可选行动中选择一个，并简单说明理由（1句话）。
+格式：行动：[选择的行动] - 理由：[简短理由]"""
+
+                    response = await llm_client.generate_text(
+                        prompt=prompt,
+                        model_type=ModelType.FAST,
+                        temperature=0.8,
+                        max_tokens=100
+                    )
+                    action_text = response.strip()
+                else:
+                    # 降级：随机选择
+                    import random
+                    action_text = f"{random.choice(possible_actions)}中..."
+            except:
+                # 降级：随机选择
+                import random
+                action_text = f"{random.choice(possible_actions)}中..."
+        else:
+            # 规则模式：随机选择
+            import random
+            action_text = f"{random.choice(possible_actions)}中..."
+
+        # 存储行动记忆
+        await self.memory.store("event", {
+            "event_summary": f"{self.name}的行动",
+            "event_details": action_text,
+            "participants": [self.agent_id],
+            "importance": 0.7
+        })
+
+        return {
+            "action": action_text,
+            "success": True,
+            "agent_name": self.name
+        }
+
+    async def chat(
+        self,
+        message: str,
+        context: Optional[Dict[str, Any]] = None
+    ) -> str:
+        """
+        与智能体对话（简化API）
+
+        Args:
+            message: 用户消息
+            context: 对话上下文（如剧情背景）
+
+        Returns:
+            智能体的回复文本（纯文本，不是字典）
+        """
+        if not self._running:
+            return "（智能体未运行）"
+
+        # 如果使用LLM，生成有上下文的回复
+        if self.use_llm:
+            try:
+                from agent_system.llm import get_llm_client, ModelType
+                llm_client = get_llm_client()
+
+                if llm_client and context:
+                    context_prompt = f"""你是{self.name}，{self.config.get('role', '角色')}。
+性格：{self.config.get('personality', '友好')}
+
+{context.get('story_context', '')}
+
+请以角色身份回复用户，保持性格特点。回复要简洁（1-2句话）。
+
+用户问：{message}"""
+
+                    response = await llm_client.generate_text(
+                        prompt=context_prompt,
+                        model_type=ModelType.FAST,
+                        temperature=0.8,
+                        max_tokens=150
+                    )
+
+                    # 存储对话记忆
+                    await self.memory.store("event", {
+                        "event_summary": "对话",
+                        "event_details": f"用户: {message}\n{self.name}: {response}",
+                        "participants": ["user", self.agent_id],
+                        "importance": 0.6
+                    })
+
+                    return response.strip()
+            except:
+                pass
+
+        # 降级模式：使用原有的 receive_message
+        result = await self.receive_message("user", message, {})
+        response_text = result.get("response", str(result))
+
+        # 如果返回的是字典格式的字符串，提取实际内容
+        if isinstance(response_text, str) and "response" in response_text:
+            return f"（作为{self.name}）收到：{message}"
+
+        return str(response_text)
+
     # 私有方法
 
     async def _register_default_tools(self) -> None:

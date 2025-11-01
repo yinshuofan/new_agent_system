@@ -8,11 +8,118 @@
 
 | 示例 | 说明 | 特点 | 推荐 |
 |------|------|------|------|
-| `autonomous_story.py` | **自主运行剧情系统** | **自主行动、自动推进、可交互** | ⭐⭐⭐⭐ |
+| `framework_simple.py` | **使用改进框架的简单示例** | **框架高层API、简洁易用** | ⭐⭐⭐⭐⭐ |
+| `autonomous_story.py` | 自主运行剧情系统 | 自主行动、自动推进、可交互 | ⭐⭐⭐⭐ |
 | `story_complete.py` | 完整剧情系统 | 完整上下文、直接对话、LLM集成 | ⭐⭐⭐ |
 | `story_with_llm.py` | 配置文件剧情系统 | 配置文件、命令模式 | ⭐⭐ |
 | `story_interactive.py` | 基础剧情系统 | 多智能体、剧情推进 | ⭐ |
 | `interactive_agent.py` | 基础交互智能体 | 单智能体、简单对话 | ⭐ |
+
+---
+
+## ⭐ framework_simple.py - 使用改进框架的简单示例（最佳实践！）
+
+**这是展示框架新高层API的最佳示例！简洁易用，充分利用框架功能。**
+
+### 为什么推荐
+
+- ✅ **使用框架核心功能** - 不绕过框架，使用新的高层API
+- ✅ **简洁易懂** - 代码简单，只需调用 `perform_autonomous_action()` 和 `chat()`
+- ✅ **自动处理上下文** - 框架自动注入角色和剧情上下文
+- ✅ **自动记忆存储** - 所有行动和对话自动存储到记忆模块
+- ✅ **自动LLM降级** - LLM失败时自动使用规则模式
+- ✅ **完整功能** - 自主运行、用户交互、剧情推进全部支持
+
+### 核心特性
+
+**简化的API调用**：
+
+```python
+# 自主行动 - 框架自动处理LLM、上下文、记忆
+result = await agent.perform_autonomous_action(
+    context={
+        "situation": f"当前剧情：{current_plot}",
+        "story_context": f"{story.title} - 第{chapter}章"
+    }
+)
+print(f"{result['agent_name']}: {result['action']}")
+
+# 对话 - 返回纯文本，自动处理上下文和记忆
+response = await agent.chat(
+    message,
+    context={"story_context": f"剧情：{story.title}\n当前章节：{plot}"}
+)
+print(f"{agent.name}: {response}")
+```
+
+**对比旧方式**：
+```python
+# 旧方式 - 需要手动处理所有细节
+llm_client = get_llm_client()
+prompt = f"""复杂的提示词构建..."""
+response = await llm_client.generate_text(prompt, ...)
+await agent.memory.store("event", {...})
+# 需要自己处理所有逻辑
+```
+
+### 快速开始
+
+```bash
+cd examples
+python framework_simple.py         # 使用LLM模式
+python framework_simple.py --no-llm  # 使用规则模式
+```
+
+### 功能演示
+
+**自主运行** - 智能体每5秒自动行动：
+```
+[15:45:00] 🎬 福尔摩斯: 检查现场中...
+[15:45:05] 🎬 华生: 协助调查中...
+```
+
+**用户交互** - 随时与智能体对话：
+```
+> 你好，发现什么线索了吗？
+💬 你 → 福尔摩斯: 你好，发现什么线索了吗？
+🎭 福尔摩斯: 我在现场发现了一些痕迹...
+```
+
+**剧情推进** - 每4个行动自动推进：
+```
+======================================================================
+📖 剧情推进！进入第 2 章
+▶ 调查：侦探开始调查并收集证据
+======================================================================
+```
+
+### 命令
+
+| 命令 | 说明 |
+|------|------|
+| `/pause` | 暂停自主运行 |
+| `/resume` | 恢复自主运行 |
+| `/status` | 查看剧情状态 |
+| `/quit` | 退出程序 |
+
+### 框架改进说明
+
+此示例展示了框架的两个新高层API：
+
+#### 1. `agent.perform_autonomous_action()`
+- **输入**：`possible_actions` 列表和 `context` 字典
+- **自动处理**：LLM调用、上下文注入、记忆存储、降级策略
+- **输出**：`{"action": "行动描述", "success": True, "agent_name": "名称"}`
+
+#### 2. `agent.chat()`
+- **输入**：`message` 字符串和 `context` 字典
+- **自动处理**：上下文注入、LLM调用、记忆存储
+- **输出**：纯文本回复（不是字典）
+
+这两个API让框架变得：
+- **简单** - 不需要手动构建复杂提示词
+- **可靠** - 自动降级，不会因LLM失败而崩溃
+- **完整** - 自动使用框架的所有模块（记忆、情感、认知等）
 
 ---
 
